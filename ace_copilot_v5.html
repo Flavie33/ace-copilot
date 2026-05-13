@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACE Copilot Commercial</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f0d; --surface: #111a15; --surface2: #162019; --surface3: #1a2620;
+    --border: #1e2e22; --border2: #253329;
+    --green: #2dff7a; --green-dim: #1a9447; --green-bg: #0d1f12;
+    --text: #e8f0ea; --text2: #7a9880; --text3: #4a6350;
+    --amber: #ffb830; --amber-bg: #1a1200; --amber-border: #3a2800;
+    --blue: #4db8ff; --blue-bg: #001525;
+    --purple: #b07fff; --purple-bg: #150d2a; --purple-border: #2d1a5a;
+    --red: #ff6b6b; --red-bg: #1a0a0a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* NAV */
+  .nav { display: flex; align-items: center; padding: 0 2rem; border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top: 0; z-index: 100; height: 56px; gap: 0; }
+  .logo { display: flex; align-items: center; gap: 10px; margin-right: 2rem; }
+  .logo-box { width: 32px; height: 32px; background: var(--green); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; color: var(--bg); flex-shrink: 0; }
+  .logo-text { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 600; color: var(--text); }
+  .nav-tabs { display: flex; gap: 2px; }
+  .nav-tab { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: transparent; color: var(--text2); font-family: 'DM Sans', sans-serif; transition: all .15s; display: flex; align-items: center; gap: 6px; }
+  .nav-tab:hover { color: var(--text); background: var(--surface2); }
+  .nav-tab.active { color: var(--green); background: var(--green-bg); }
+  .nav-count { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-dim); border-radius: 10px; padding: 1px 7px; font-size: 11px; font-weight: 600; }
+
+  /* PAGES */
+  .page { display: none; padding: 2rem; }
+  .page.active { display: block; }
+
+  /* MODE SWITCHER */
+  .mode-switcher { display: flex; gap: 6px; max-width: 1100px; margin: 0 auto 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 5px; }
+  .mode-btn { flex: 1; padding: 10px 16px; border-radius: 8px; border: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all .2s; color: var(--text2); display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .mode-btn:hover { color: var(--text); }
+  .mode-btn.active-nouveau { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
+  .mode-btn.active-qualifie { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-dim); }
+  .mode-desc { font-size: 11px; opacity: .7; }
+
+  /* FORMS */
+  .form-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; max-width: 1100px; margin: 0 auto; }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  .panel-header { padding: .875rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  .panel-header h2 { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .08em; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text3); flex-shrink: 0; }
+  .dot.green { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .dot.amber { background: var(--amber); }
+  .dot.purple { background: var(--purple); box-shadow: 0 0 8px var(--purple); }
+  .panel-body { padding: 1.25rem; }
+  .field-group { margin-bottom: .875rem; }
+  .field-group:last-child { margin-bottom: 0; }
+  label { display: block; font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; }
+  input[type=text], input[type=date], select, textarea {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px;
+    padding: 9px 12px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px;
+    outline: none; transition: border-color .2s; appearance: none;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--green-dim); }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234a6350' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 32px; cursor: pointer; }
+  select option { background: #111a15; }
+  textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .btn-analyze { width: 100%; padding: 12px; border: none; border-radius: 10px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all .2s; margin-top: .875rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-analyze.btn-nouveau { background: var(--purple); color: #fff; }
+  .btn-analyze.btn-nouveau:hover { opacity: .85; transform: translateY(-1px); }
+  .btn-analyze.btn-qualifie { background: var(--green); color: var(--bg); }
+  .btn-analyze.btn-qualifie:hover { background: #4dffa0; transform: translateY(-1px); }
+  .btn-analyze:disabled { background: var(--text3) !important; cursor: not-allowed; transform: none !important; color: var(--bg); }
+  .spinner { width: 15px; height: 15px; border: 2px solid rgba(0,0,0,0.3); border-top-color: currentColor; border-radius: 50%; animation: spin .7s linear infinite; display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-msg { background: var(--red-bg); border: 1px solid #3a1515; border-radius: 8px; padding: 1rem; color: var(--red); font-size: 13px; display: none; margin-top: .875rem; }
+
+  /* RESULTS */
+  .results-panel { grid-column: 1 / -1; display: none; }
+  .results-panel.visible { display: block; }
+  .tabs { display: flex; gap: 4px; padding: .75rem 1.25rem; border-bottom: 1px solid var(--border); overflow-x: auto; }
+  .tab { padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid transparent; color: var(--text2); background: transparent; font-family: 'DM Sans', sans-serif; white-space: nowrap; transition: all .15s; }
+  .tab:hover { color: var(--text); border-color: var(--border2); }
+  .tab.active { background: var(--green-bg); color: var(--green); border-color: var(--green-dim); }
+  .tab.active.purple-tab { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
+  .tab-content { display: none; padding: 1.5rem; }
+  .tab-content.active { display: block; }
+  .result-text { font-size: 14px; line-height: 1.8; color: var(--text); white-space: pre-wrap; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; margin-bottom: 1rem; }
+  .badge-green { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-dim); }
+  .badge-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+  .badge-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
+  .loading-state { display: none; text-align: center; padding: 3rem; color: var(--text2); }
+  .loading-state.visible { display: block; }
+  .loading-dots { display: flex; gap: 6px; justify-content: center; margin-bottom: 1rem; }
+  .loading-dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 1.2s ease-in-out infinite; }
+  .loading-dots span:nth-child(2) { animation-delay: .2s; }
+  .loading-dots span:nth-child(3) { animation-delay: .4s; }
+  @keyframes pulse { 0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:1;transform:scale(1)} }
+  ul.result-list { list-style: none; padding: 0; }
+  ul.result-list li { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text); line-height: 1.6; display: flex; gap: 10px; }
+  ul.result-list li:last-child { border-bottom: none; }
+  ul.result-list li::before { content: '→'; color: var(--green); flex-shrink: 0; font-size: 12px; margin-top: 2px; }
+  ul.result-list.purple-list li::before { color: var(--purple); }
+  .objection-card { background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; }
+  .objection-card .obj-title { font-size: 12px; font-weight: 500; color: var(--amber); margin-bottom: 4px; }
+  .objection-card .obj-response { font-size: 13px; color: var(--text); line-height: 1.6; }
+  .signal-card { background: var(--surface2); border: 1px solid var(--purple-border); border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; }
+  .signal-card .signal-title { font-size: 12px; font-weight: 500; color: var(--purple); margin-bottom: 4px; }
+  .signal-card .signal-desc { font-size: 13px; color: var(--text); line-height: 1.6; }
+  .accroche-block { background: var(--purple-bg); border: 1px solid var(--purple-border); border-radius: 10px; padding: 1.25rem; font-size: 14px; line-height: 1.8; color: var(--text); font-style: italic; }
+
+  /* HISTORIQUE */
+  .history-layout { max-width: 1100px; margin: 0 auto; }
+  .history-toolbar { display: flex; gap: 10px; margin-bottom: 1.5rem; align-items: center; flex-wrap: wrap; }
+  .search-input { flex: 1; min-width: 200px; background: var(--surface); border: 1px solid var(--border2); border-radius: 8px; padding: 9px 12px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; transition: border-color .2s; }
+  .search-input:focus { border-color: var(--green-dim); }
+  .filter-btn { padding: 8px 14px; background: var(--surface); border: 1px solid var(--border2); border-radius: 8px; color: var(--text2); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: all .15s; white-space: nowrap; }
+  .filter-btn:hover { border-color: var(--green-dim); color: var(--green); }
+  .filter-btn.active { background: var(--green-bg); color: var(--green); border-color: var(--green-dim); }
+  .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text3); }
+  .empty-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+  .empty-state p { font-size: 14px; line-height: 1.8; }
+  .clients-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
+  .client-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; cursor: pointer; transition: all .2s; }
+  .client-card:hover { border-color: var(--green-dim); transform: translateY(-2px); }
+  .client-card.type-nouveau:hover { border-color: var(--purple); }
+  .client-card-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .client-name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .client-meta { font-size: 12px; color: var(--text2); }
+  .status-badge { padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+  .status-analyser { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+  .status-cours { background: var(--blue-bg); color: var(--blue); border: 1px solid #003a5a; }
+  .status-traite { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-dim); }
+  .status-abandonne { background: #1a1a1a; color: var(--text3); border: 1px solid var(--border2); }
+  .type-tag { padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+  .type-tag.nouveau { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
+  .type-tag.qualifie { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-dim); }
+  .client-card-body { padding: 1rem 1.25rem; }
+  .client-info-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); padding: 4px 0; }
+  .client-info-row span:last-child { color: var(--text); font-weight: 500; }
+  .client-card-footer { padding: .75rem 1.25rem; border-top: 1px solid var(--border); display: flex; gap: 8px; align-items: center; }
+  .card-btn { padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 500; cursor: pointer; border: 1px solid var(--border2); background: transparent; color: var(--text2); font-family: 'DM Sans', sans-serif; transition: all .15s; }
+  .card-btn:hover { border-color: var(--green-dim); color: var(--green); }
+  .card-btn.danger:hover { border-color: #3a1515; color: var(--red); }
+  .has-analysis { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--green); margin-left: auto; }
+
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 200; display: none; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(4px); }
+  .modal-overlay.visible { display: flex; }
+  .modal { background: var(--surface); border: 1px solid var(--border2); border-radius: 20px; width: 100%; max-width: 800px; max-height: 90vh; overflow-y: auto; }
+  .modal-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--surface); z-index: 1; }
+  .modal-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 600; color: var(--text); }
+  .modal-close { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border2); background: transparent; color: var(--text2); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+  .modal-close:hover { border-color: var(--red); color: var(--red); }
+  .modal-body { padding: 1.5rem; }
+  .modal-section { margin-bottom: 1.5rem; }
+  .modal-section-title { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: .75rem; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .info-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+  .info-label { font-size: 11px; color: var(--text3); margin-bottom: 3px; }
+  .info-value { font-size: 13px; color: var(--text); font-weight: 500; }
+  .notes-textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; padding: 10px 12px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; resize: vertical; min-height: 100px; line-height: 1.6; transition: border-color .2s; }
+  .notes-textarea:focus { border-color: var(--green-dim); }
+  .save-notes-btn { margin-top: 8px; padding: 7px 16px; background: var(--green-bg); border: 1px solid var(--green-dim); border-radius: 6px; color: var(--green); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: all .15s; }
+  .save-notes-btn:hover { background: var(--green); color: var(--bg); }
+  .status-select { background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; padding: 8px 32px 8px 12px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234a6350' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; transition: border-color .2s; }
+  .modal-analysis-tabs { display: flex; gap: 4px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .modal-tab { padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 500; cursor: pointer; border: 1px solid var(--border2); color: var(--text2); background: transparent; font-family: 'DM Sans', sans-serif; white-space: nowrap; transition: all .15s; }
+  .modal-tab.active { background: var(--green-bg); color: var(--green); border-color: var(--green-dim); }
+  .modal-tab.active.purple { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
+  .modal-tab-content { display: none; }
+  .modal-tab-content.active { display: block; }
+  .no-analysis { text-align: center; padding: 2rem; color: var(--text3); font-size: 13px; background: var(--surface2); border-radius: 10px; border: 1px dashed var(--border2); }
+
+  @media (max-width: 768px) {
+    .form-layout { grid-template-columns: 1fr; }
+    .results-panel { grid-column: 1; }
+    .page { padding: 1rem; }
+    .info-grid { grid-template-columns: 1fr; }
+    .clients-grid { grid-template-columns: 1fr; }
+    .nav { padding: 0 1rem; }
+    .mode-switcher { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="logo">
+    <div class="logo-box">ACE</div>
+    <span class="logo-text">Copilot</span>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('form', this)">⚡ Analyse</button>
+    <button class="nav-tab" onclick="showPage('history', this)">
+      📋 Clients <span class="nav-count" id="history-count">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- PAGE ANALYSE -->
+<div class="page active" id="page-form">
+
+  <!-- MODE SWITCHER -->
+  <div class="mode-switcher">
+    <button class="mode-btn active-nouveau" id="btn-mode-nouveau" onclick="setMode('nouveau')">
+      <div>
+        <div>🚪 Nouveau contact</div>
+        <div class="mode-desc">Première approche terrain, sans facture</div>
+      </div>
+    </button>
+    <button class="mode-btn" id="btn-mode-qualifie" onclick="setMode('qualifie')">
+      <div>
+        <div>📄 Client qualifié</div>
+        <div class="mode-desc">Prospect avec facture et infos complètes</div>
+      </div>
+    </button>
+  </div>
+
+  <!-- FORM NOUVEAU CONTACT -->
+  <div id="form-nouveau" class="form-layout">
+    <div class="panel">
+      <div class="panel-header"><div class="dot purple"></div><h2>Nouveau contact</h2></div>
+      <div class="panel-body">
+        <div class="field-group">
+          <label>Entreprise *</label>
+          <input type="text" id="nc-client" placeholder="Ex: Boulangerie Martin" />
+        </div>
+        <div class="grid-2">
+          <div class="field-group">
+            <label>Secteur *</label>
+            <select id="nc-secteur">
+              <option value="">Sélectionner...</option>
+              <option>Industrie</option><option>Tertiaire</option><option>CHR</option>
+              <option>Agriculture</option><option>Collectivité</option><option>Santé</option>
+              <option>Commerce & Distribution</option><option>Autre</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Taille estimée</label>
+            <select id="nc-taille">
+              <option value="">Sélectionner...</option>
+              <option>TPE (1-9 salariés)</option>
+              <option>PME (10-249 salariés)</option>
+              <option>ETI (250-4999 salariés)</option>
+              <option>Grande entreprise</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Observations terrain</label>
+          <textarea id="nc-observations" placeholder="Ex: Commerce de coin de rue, plusieurs climatiseurs visibles, néons allumés en journée, l'air d'être là depuis longtemps..."></textarea>
+        </div>
+        <div class="field-group">
+          <label>Contexte de la prise de contact</label>
+          <textarea id="nc-contexte" placeholder="Ex: Passage en prospection, recommandation d'un client, salon professionnel..."></textarea>
+        </div>
+        <div id="error-msg-nouveau" class="error-msg"></div>
+        <button class="btn-analyze btn-nouveau" onclick="analyserNouveau()" id="btn-analyze-nouveau">
+          <div class="spinner" id="spinner-nouveau"></div>
+          <span id="btn-text-nouveau">🚪 Préparer l'approche</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><div class="dot purple"></div><h2>À quoi ça sert ?</h2></div>
+      <div class="panel-body">
+        <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:1.5rem;">
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <div style="width:28px;height:28px;border-radius:6px;background:var(--purple-bg);border:1px solid var(--purple-border);display:flex;align-items:center;justify-content:center;font-family:Syne;font-size:13px;font-weight:700;color:var(--purple);flex-shrink:0;">1</div>
+            <div><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;">Tu vois un commerce</div><div style="font-size:12px;color:var(--text2);line-height:1.5;">Entre le secteur et tes observations rapides depuis la rue.</div></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <div style="width:28px;height:28px;border-radius:6px;background:var(--purple-bg);border:1px solid var(--purple-border);display:flex;align-items:center;justify-content:center;font-family:Syne;font-size:13px;font-weight:700;color:var(--purple);flex-shrink:0;">2</div>
+            <div><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;">L'IA te prépare l'approche</div><div style="font-size:12px;color:var(--text2);line-height:1.5;">Accroche d'entrée, questions de découverte, signaux à repérer.</div></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <div style="width:28px;height:28px;border-radius:6px;background:var(--purple-bg);border:1px solid var(--purple-border);display:flex;align-items:center;justify-content:center;font-family:Syne;font-size:13px;font-weight:700;color:var(--purple);flex-shrink:0;">3</div>
+            <div><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;">Tu rentres confiant</div><div style="font-size:12px;color:var(--text2);line-height:1.5;">Tu sais quoi dire, quoi demander, et comment gérer les objections.</div></div>
+          </div>
+        </div>
+        <div style="padding-top:1.25rem;border-top:1px solid var(--border);">
+          <div style="font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Ce que tu obtiens</div>
+          <div style="display:flex;flex-direction:column;gap:7px;">
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);"><span style="color:var(--purple);">✓</span> Une accroche naturelle adaptée au secteur</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);"><span style="color:var(--purple);">✓</span> Questions de découverte pour qualifier</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);"><span style="color:var(--purple);">✓</span> Signaux d'opportunité à repérer</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);"><span style="color:var(--purple);">✓</span> Objections de première approche</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Résultats nouveau -->
+    <div class="panel results-panel" id="results-panel-nouveau">
+      <div class="panel-header">
+        <div class="dot purple"></div>
+        <h2>Briefing terrain</h2>
+        <span id="client-badge-nouveau" class="badge badge-purple" style="margin-left:8px;"></span>
+      </div>
+      <div class="loading-state" id="loading-nouveau">
+        <div class="loading-dots"><span style="background:var(--purple)"></span><span style="background:var(--purple)"></span><span style="background:var(--purple)"></span></div>
+        <div style="font-size:13px;color:var(--text2);">Préparation du briefing...</div>
+      </div>
+      <div id="results-content-nouveau" style="display:none;">
+        <div class="tabs">
+          <button class="tab active" onclick="showResultTab('n-accroche',this,true)">💬 Accroche</button>
+          <button class="tab" onclick="showResultTab('n-questions',this,true)">❓ Découverte</button>
+          <button class="tab" onclick="showResultTab('n-signaux',this,true)">👀 Signaux</button>
+          <button class="tab" onclick="showResultTab('n-objections',this,true)">🛡️ Objections</button>
+        </div>
+        <div id="n-accroche" class="tab-content active"><div class="badge badge-purple">À dire en entrant</div><div class="accroche-block" id="result-n-accroche"></div></div>
+        <div id="n-questions" class="tab-content"><div class="badge badge-purple">Questions de qualification</div><ul class="result-list purple-list" id="result-n-questions"></ul></div>
+        <div id="n-signaux" class="tab-content"><div class="badge badge-amber">Bons signaux à repérer</div><div id="result-n-signaux"></div></div>
+        <div id="n-objections" class="tab-content"><div class="badge badge-amber">Objections fréquentes</div><div id="result-n-objections"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM CLIENT QUALIFIÉ -->
+  <div id="form-qualifie" class="form-layout" style="display:none;">
+    <div class="panel">
+      <div class="panel-header"><div class="dot"></div><h2>Fiche client</h2></div>
+      <div class="panel-body">
+        <div class="field-group">
+          <label>Entreprise *</label>
+          <input type="text" id="client" placeholder="Ex: Boulangerie Martin SAS" />
+        </div>
+        <div class="grid-2">
+          <div class="field-group">
+            <label>Secteur *</label>
+            <select id="secteur">
+              <option value="">Sélectionner...</option>
+              <option>Industrie</option><option>Tertiaire</option><option>CHR</option>
+              <option>Agriculture</option><option>Collectivité</option><option>Santé</option>
+              <option>Commerce & Distribution</option><option>Autre</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Énergie</label>
+            <select id="energie">
+              <option value="">Sélectionner...</option>
+              <option>Électricité</option><option>Gaz</option><option>Électricité + Gaz</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field-group">
+            <label>Fournisseur actuel *</label>
+            <select id="fournisseur">
+              <option value="">Sélectionner...</option>
+              <option>EDF</option><option>Engie</option><option>TotalEnergies</option>
+              <option>Vattenfall</option><option>Alpiq</option><option>Ekwateur</option>
+              <option>Direct Énergie</option><option>Autre</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Échéance contrat</label>
+            <input type="date" id="echeance" />
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Problématique principale *</label>
+          <textarea id="problematique" placeholder="Ex: Factures trop élevées, manque de visibilité..."></textarea>
+        </div>
+        <div class="field-group">
+          <label>Notes commerciales</label>
+          <textarea id="notes" placeholder="Ex: Décideur = PDG, très attaché au prix..."></textarea>
+        </div>
+        <div id="error-msg" class="error-msg"></div>
+        <button class="btn-analyze btn-qualifie" onclick="analyser()" id="btn-analyze">
+          <div class="spinner" id="spinner"></div>
+          <span id="btn-text">⚡ Analyser ce client</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><div class="dot amber"></div><h2>Approche ACE</h2></div>
+      <div class="panel-body">
+        <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:1.5rem;">
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <div style="width:28px;height:28px;border-radius:6px;background:var(--green-bg);border:1px solid var(--green-dim);display:flex;align-items:center;justify-content:center;font-family:Syne;font-size:13px;font-weight:700;color:var(--green);flex-shrink:0;">1</div>
+            <div><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;">Remplis la fiche client</div><div style="font-size:12px;color:var(--text2);line-height:1.5;">Secteur, fournisseur, échéance et problématique.</div></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <div style="width:28px;height:28px;border-radius:6px;background:var(--green-bg);border:1px solid var(--green-dim);display:flex;align-items:center;justify-content:center;font-family:Syne;font-size:13px;font-weight:700;color:var(--green);flex-shrink:0;">2</div>
+            <div><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;">Lance l'analyse IA</div><div style="font-size:12px;color:var(--text2);line-height:1.5;">Briefing complet généré en quelques secondes.</div></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <div style="width:28px;height:28px;border-radius:6px;background:var(--green-bg);border:1px solid var(--green-dim);display:flex;align-items:center;justify-content:center;font-family:Syne;font-size:13px;font-weight:700;color:var(--green);flex-shrink:0;">3</div>
+            <div><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;">Prépare ton rendez-vous</div><div style="font-size:12px;color:var(--text2);line-height:1.5;">Questions, objections et angle commercial.</div></div>
+          </div>
+        </div>
+        <div style="padding-top:1.25rem;border-top:1px solid var(--border);">
+          <div style="font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Valeurs ACE</div>
+          <div style="display:flex;flex-direction:column;gap:7px;">
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);"><span style="color:var(--green);">✓</span> Accompagnement & pédagogie</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);"><span style="color:var(--green);">✓</span> Clarté & transparence tarifaire</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);"><span style="color:var(--green);">✓</span> Expertise marché énergie B2B</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);"><span style="color:var(--green);">✓</span> Sans discours commercial agressif</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Résultats qualifié -->
+    <div class="panel results-panel" id="results-panel">
+      <div class="panel-header">
+        <div class="dot green"></div>
+        <h2>Analyse générée</h2>
+        <span id="client-badge" class="badge badge-green" style="margin-left:8px;"></span>
+      </div>
+      <div class="loading-state" id="loading-state">
+        <div class="loading-dots"><span></span><span></span><span></span></div>
+        <div style="font-size:13px;color:var(--text2);">Analyse en cours...</div>
+      </div>
+      <div id="results-content" style="display:none;">
+        <div class="tabs">
+          <button class="tab active" onclick="showResultTab('analyse',this,false)">📊 Analyse</button>
+          <button class="tab" onclick="showResultTab('questions',this,false)">❓ Questions</button>
+          <button class="tab" onclick="showResultTab('objections',this,false)">🛡️ Objections</button>
+          <button class="tab" onclick="showResultTab('angle',this,false)">🎯 Angle</button>
+        </div>
+        <div id="tab-analyse" class="tab-content active"><div class="badge badge-amber">Contexte client</div><div class="result-text" id="result-analyse"></div></div>
+        <div id="tab-questions" class="tab-content"><div class="badge badge-green">À poser en RDV</div><ul class="result-list" id="result-questions"></ul></div>
+        <div id="tab-objections" class="tab-content"><div class="badge badge-amber">Anticiper & répondre</div><div id="result-objections"></div></div>
+        <div id="tab-angle" class="tab-content"><div class="badge badge-green">Positionnement ACE</div><div class="result-text" id="result-angle"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE HISTORIQUE -->
+<div class="page" id="page-history">
+  <div class="history-layout">
+    <div class="history-toolbar">
+      <input type="text" class="search-input" placeholder="🔍 Rechercher un client, secteur..." oninput="filterClients(this.value)" />
+      <button class="filter-btn active" onclick="setFilter('tous', this)">Tous</button>
+      <button class="filter-btn" onclick="setFilter('nouveau', this)">🚪 Nouveaux contacts</button>
+      <button class="filter-btn" onclick="setFilter('qualifie', this)">📄 Clients qualifiés</button>
+      <button class="filter-btn" onclick="setFilter('À analyser', this)">🟡 À analyser</button>
+      <button class="filter-btn" onclick="setFilter('En cours', this)">🔵 En cours</button>
+      <button class="filter-btn" onclick="setFilter('Traité', this)">🟢 Traité</button>
+    </div>
+    <div id="clients-grid" class="clients-grid"></div>
+    <div id="empty-state" class="empty-state" style="display:none;">
+      <div class="empty-icon">📋</div>
+      <p>Aucun client pour l'instant.<br>Lance ta première analyse !</p>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-client-name"></div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px;" id="modal-client-sub"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <div class="modal-section-title">Informations</div>
+        <div class="info-grid" id="modal-info-grid"></div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">Statut</div>
+        <select class="status-select" id="modal-status" onchange="updateStatus(this.value)">
+          <option value="À analyser">🟡 À analyser</option>
+          <option value="En cours">🔵 En cours</option>
+          <option value="Traité">🟢 Traité</option>
+          <option value="Abandonné">⚫ Abandonné</option>
+        </select>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">Notes & suivi</div>
+        <textarea class="notes-textarea" id="modal-notes" placeholder="Compte-rendu de RDV, observations, prochaines étapes..."></textarea>
+        <button class="save-notes-btn" onclick="saveNotes()">💾 Sauvegarder</button>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">Analyse IA</div>
+        <div id="modal-analysis-content"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---- STATE ----
+const STORAGE_KEY = 'ace_clients_v5';
+let clients = [];
+let currentClientId = null;
+let currentFilter = 'tous';
+let searchQuery = '';
+let currentMode = 'nouveau';
+
+// ---- STORAGE ----
+function loadClients() {
+  try { const r = localStorage.getItem(STORAGE_KEY); clients = r ? JSON.parse(r) : []; } catch { clients = []; }
+}
+function saveClients() { localStorage.setItem(STORAGE_KEY, JSON.stringify(clients)); updateHistoryCount(); }
+function updateHistoryCount() { document.getElementById('history-count').textContent = clients.length; }
+
+// ---- NAV ----
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'history') renderClients();
+}
+
+// ---- MODE ----
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('form-nouveau').style.display = mode === 'nouveau' ? 'grid' : 'none';
+  document.getElementById('form-qualifie').style.display = mode === 'qualifie' ? 'grid' : 'none';
+  const btnN = document.getElementById('btn-mode-nouveau');
+  const btnQ = document.getElementById('btn-mode-qualifie');
+  btnN.className = 'mode-btn' + (mode === 'nouveau' ? ' active-nouveau' : '');
+  btnQ.className = 'mode-btn' + (mode === 'qualifie' ? ' active-qualifie' : '');
+}
+
+// ---- API CALL ----
+async function callAPI(systemPrompt, userMessage) {
+  const response = await fetch('/api/analyze', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'gemini',
+      max_tokens: 8000,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userMessage }]
+    })
+  });
+  const data = await response.json();
+  if (data.error) throw new Error(data.error.message);
+  if (!data.content || !data.content[0]) throw new Error('Réponse vide : ' + JSON.stringify(data).substring(0, 200));
+  let raw = data.content[0].text;
+  raw = raw.replace(/```json/gi, '').replace(/```/gi, '').trim();
+  const jm = raw.match(/\{[\s\S]*\}/);
+  if (jm) raw = jm[0];
+  try { return JSON.parse(raw); }
+  catch(e) { throw new Error('Réponse reçue: ' + raw.substring(0, 300)); }
+}
+
+// ---- ANALYSE NOUVEAU CONTACT ----
+async function analyserNouveau() {
+  const client = document.getElementById('nc-client').value.trim();
+  const secteur = document.getElementById('nc-secteur').value;
+  const taille = document.getElementById('nc-taille').value;
+  const observations = document.getElementById('nc-observations').value.trim();
+  const contexte = document.getElementById('nc-contexte').value.trim();
+
+  if (!client || !secteur) { showError('Merci de remplir au minimum : Entreprise et Secteur.', 'nouveau'); return; }
+
+  document.getElementById('error-msg-nouveau').style.display = 'none';
+  setLoading(true, 'nouveau');
+  document.getElementById('results-panel-nouveau').classList.add('visible');
+  document.getElementById('loading-nouveau').classList.add('visible');
+  document.getElementById('results-content-nouveau').style.display = 'none';
+  document.getElementById('client-badge-nouveau').textContent = client;
+
+  const system = `Tu es un expert en courtage d'énergie pour ACE, spécialisé dans la prospection terrain en B2B en France.
+Un commercial ACE s'apprête à entrer dans un commerce/entreprise pour la première fois, sans rendez-vous et sans avoir vu leur facture.
+Ton rôle : lui donner un briefing terrain rapide et pratique pour maximiser ses chances de succès lors de cette première approche.
+Approche ACE : pédagogie, accompagnement, pas de pression commerciale.
+
+Génère UNIQUEMENT un JSON valide avec ces 4 clés :
+{
+  "accroche": "Une phrase d'entrée naturelle et non commerciale, adaptée au secteur, pour briser la glace et engager la conversation. Doit sembler spontanée, pas scripté.",
+  "questions": ["Question de découverte 1 pour qualifier le prospect (fournisseur, échéance, consommation, décideur...)", "Question 2", "Question 3", "Question 4", "Question 5"],
+  "signaux": [{"signal": "Ce qu'il faut repérer visuellement ou entendre", "interpretation": "Ce que ça indique comme opportunité pour ACE"}, {"signal": "...", "interpretation": "..."}, {"signal": "...", "interpretation": "..."}],
+  "objections": [{"objection": "Objection typique de première approche", "reponse": "Réponse courte, naturelle, non agressive"}, {"objection": "...", "reponse": "..."}, {"objection": "...", "reponse": "..."}]
+}
+Réponds UNIQUEMENT avec le JSON.`;
+
+  const userMsg = `Entreprise: ${client}\nSecteur: ${secteur}\nTaille estimée: ${taille||'non précisée'}\nObservations terrain: ${observations||'aucune'}\nContexte: ${contexte||'prospection terrain classique'}`;
+
+  try {
+    const parsed = await callAPI(system, userMsg);
+
+    document.getElementById('result-n-accroche').textContent = parsed.accroche;
+
+    const ql = document.getElementById('result-n-questions');
+    ql.innerHTML = '';
+    (Array.isArray(parsed.questions) ? parsed.questions : []).forEach(q => {
+      const li = document.createElement('li'); li.textContent = q.replace(/^[-•*\d.]\s*/,''); ql.appendChild(li);
+    });
+
+    const sd = document.getElementById('result-n-signaux');
+    sd.innerHTML = '';
+    (Array.isArray(parsed.signaux) ? parsed.signaux : []).forEach(s => {
+      sd.innerHTML += `<div class="signal-card"><div class="signal-title">👀 ${s.signal}</div><div class="signal-desc">${s.interpretation}</div></div>`;
+    });
+
+    const od = document.getElementById('result-n-objections');
+    od.innerHTML = '';
+    (Array.isArray(parsed.objections) ? parsed.objections : []).forEach(o => {
+      od.innerHTML += `<div class="objection-card"><div class="obj-title">⚠️ ${o.objection}</div><div class="obj-response">${o.reponse}</div></div>`;
+    });
+
+    document.getElementById('loading-nouveau').classList.remove('visible');
+    document.getElementById('results-content-nouveau').style.display = 'block';
+
+    // Sauvegarder
+    clients.unshift({ id: Date.now().toString(), type: 'nouveau', client, secteur, taille, observations, contexte, userNotes: '', statut: 'À analyser', createdAt: new Date().toISOString(), analysis: parsed });
+    saveClients();
+
+  } catch(err) {
+    document.getElementById('loading-nouveau').classList.remove('visible');
+    showError(err.message, 'nouveau');
+    document.getElementById('results-panel-nouveau').classList.remove('visible');
+  } finally {
+    setLoading(false, 'nouveau');
+  }
+}
+
+// ---- ANALYSE CLIENT QUALIFIÉ ----
+async function analyser() {
+  const client = document.getElementById('client').value.trim();
+  const secteur = document.getElementById('secteur').value;
+  const energie = document.getElementById('energie').value;
+  const fournisseur = document.getElementById('fournisseur').value;
+  const echeance = document.getElementById('echeance').value;
+  const problematique = document.getElementById('problematique').value.trim();
+  const notes = document.getElementById('notes').value.trim();
+
+  if (!client || !secteur || !fournisseur || !problematique) { showError('Merci de remplir : Entreprise, Secteur, Fournisseur et Problématique.', 'qualifie'); return; }
+
+  document.getElementById('error-msg').style.display = 'none';
+  setLoading(true, 'qualifie');
+  document.getElementById('results-panel').classList.add('visible');
+  document.getElementById('loading-state').classList.add('visible');
+  document.getElementById('results-content').style.display = 'none';
+  document.getElementById('client-badge').textContent = client;
+
+  const echeanceStr = echeance ? new Date(echeance).toLocaleDateString('fr-FR', {month:'long',year:'numeric'}) : 'non précisée';
+
+  const system = `Tu es un expert en courtage d'énergie pour ACE, cabinet spécialisé en accompagnement des entreprises sur leurs contrats d'énergie en France.
+Ton rôle : aider les commerciaux ACE à préparer leurs rendez-vous avec une approche pédagogique, claire et experte. Jamais de discours agressif.
+Tu connais le marché énergie B2B : fournisseurs, mécanismes de prix (ARENH, TURPE, capacité), transition énergétique, obligations réglementaires.
+
+Génère UNIQUEMENT un JSON valide avec ces 4 clés :
+{
+  "analyse": "3-4 phrases de contexte sur le profil client, ses enjeux sectoriels, et ce que son fournisseur actuel implique.",
+  "questions": ["Question ouverte 1", "Question ouverte 2", "Question ouverte 3", "Question ouverte 4", "Question ouverte 5"],
+  "objections": [{"objection": "...", "reponse": "..."}, {"objection": "...", "reponse": "..."}, {"objection": "...", "reponse": "..."}],
+  "angle": "1 paragraphe sur l'angle de négociation recommandé pour ce client spécifique."
+}
+Réponds UNIQUEMENT avec le JSON.`;
+
+  const userMsg = `Client: ${client}\nSecteur: ${secteur}\nÉnergie: ${energie||'non précisé'}\nFournisseur: ${fournisseur}\nÉchéance: ${echeanceStr}\nProblématique: ${problematique}\nNotes: ${notes||'aucune'}`;
+
+  try {
+    const parsed = await callAPI(system, userMsg);
+
+    document.getElementById('result-analyse').textContent = parsed.analyse;
+    const ql = document.getElementById('result-questions');
+    ql.innerHTML = '';
+    (Array.isArray(parsed.questions) ? parsed.questions : []).forEach(q => {
+      const li = document.createElement('li'); li.textContent = q.replace(/^[-•*]\s*/,''); ql.appendChild(li);
+    });
+    const od = document.getElementById('result-objections');
+    od.innerHTML = '';
+    (Array.isArray(parsed.objections) ? parsed.objections : []).forEach(o => {
+      od.innerHTML += `<div class="objection-card"><div class="obj-title">⚠️ ${o.objection}</div><div class="obj-response">${o.reponse}</div></div>`;
+    });
+    document.getElementById('result-angle').textContent = parsed.angle;
+    document.getElementById('loading-state').classList.remove('visible');
+    document.getElementById('results-content').style.display = 'block';
+
+    // Sauvegarder
+    clients.unshift({ id: Date.now().toString(), type: 'qualifie', client, secteur, energie, fournisseur, echeance, problematique, notes, userNotes: '', statut: 'À analyser', createdAt: new Date().toISOString(), analysis: parsed });
+    saveClients();
+
+  } catch(err) {
+    document.getElementById('loading-state').classList.remove('visible');
+    showError(err.message, 'qualifie');
+    document.getElementById('results-panel').classList.remove('visible');
+  } finally {
+    setLoading(false, 'qualifie');
+  }
+}
+
+// ---- HELPERS ----
+function setLoading(on, mode) {
+  if (mode === 'nouveau') {
+    document.getElementById('btn-analyze-nouveau').disabled = on;
+    document.getElementById('spinner-nouveau').style.display = on ? 'block' : 'none';
+    document.getElementById('btn-text-nouveau').textContent = on ? 'Préparation...' : '🚪 Préparer l\'approche';
+  } else {
+    document.getElementById('btn-analyze').disabled = on;
+    document.getElementById('spinner').style.display = on ? 'block' : 'none';
+    document.getElementById('btn-text').textContent = on ? 'Analyse en cours...' : '⚡ Analyser ce client';
+  }
+}
+
+function showError(msg, mode) {
+  const id = mode === 'nouveau' ? 'error-msg-nouveau' : 'error-msg';
+  const e = document.getElementById(id);
+  e.textContent = '⚠️ ' + msg; e.style.display = 'block';
+}
+
+function showResultTab(name, btn, isPurple) {
+  const container = btn.closest('.tabs').parentElement;
+  container.querySelectorAll('.tab').forEach(t => t.classList.remove('active', 'purple-tab'));
+  container.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  if (isPurple) btn.classList.add('purple-tab');
+  document.getElementById(name).classList.add('active');
+}
+
+// ---- HISTORIQUE ----
+function setFilter(val, btn) {
+  currentFilter = val;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderClients();
+}
+function filterClients(q) { searchQuery = q.toLowerCase(); renderClients(); }
+function getStatusClass(s) {
+  if (s === 'À analyser') return 'status-analyser';
+  if (s === 'En cours') return 'status-cours';
+  if (s === 'Traité') return 'status-traite';
+  return 'status-abandonne';
+}
+
+function renderClients() {
+  const grid = document.getElementById('clients-grid');
+  const empty = document.getElementById('empty-state');
+  let list = [...clients];
+  if (currentFilter === 'nouveau') list = list.filter(c => c.type === 'nouveau');
+  else if (currentFilter === 'qualifie') list = list.filter(c => c.type === 'qualifie');
+  else if (currentFilter !== 'tous') list = list.filter(c => c.statut === currentFilter);
+  if (searchQuery) list = list.filter(c => (c.client||'').toLowerCase().includes(searchQuery) || (c.secteur||'').toLowerCase().includes(searchQuery));
+  if (list.length === 0) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  grid.innerHTML = list.map(c => `
+    <div class="client-card ${c.type === 'nouveau' ? 'type-nouveau' : ''}" onclick="openClient('${c.id}')">
+      <div class="client-card-header">
+        <div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+            <span class="client-name">${c.client}</span>
+            <span class="type-tag ${c.type === 'nouveau' ? 'nouveau' : 'qualifie'}">${c.type === 'nouveau' ? '🚪 Contact' : '📄 Qualifié'}</span>
+          </div>
+          <div class="client-meta">${c.secteur||'—'} ${c.type === 'qualifie' && c.fournisseur ? '· ' + c.fournisseur : ''}</div>
+        </div>
+        <span class="status-badge ${getStatusClass(c.statut)}">${c.statut}</span>
+      </div>
+      <div class="client-card-body">
+        ${c.type === 'qualifie' ? `<div class="client-info-row"><span>Énergie</span><span>${c.energie||'—'}</span></div><div class="client-info-row"><span>Échéance</span><span>${c.echeance ? new Date(c.echeance).toLocaleDateString('fr-FR',{month:'short',year:'numeric'}) : '—'}</span></div>` : `<div class="client-info-row"><span>Taille</span><span>${c.taille||'—'}</span></div>`}
+        <div class="client-info-row"><span>Créé le</span><span>${new Date(c.createdAt).toLocaleDateString('fr-FR')}</span></div>
+      </div>
+      <div class="client-card-footer">
+        <button class="card-btn" onclick="event.stopPropagation();openClient('${c.id}')">👁 Voir</button>
+        ${c.analysis ? '<span class="has-analysis">✓ Analyse IA</span>' : ''}
+        <button class="card-btn danger" onclick="event.stopPropagation();deleteClient('${c.id}')">🗑</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function deleteClient(id) {
+  if (!confirm('Supprimer cette fiche ?')) return;
+  clients = clients.filter(c => c.id !== id); saveClients(); renderClients();
+}
+
+// ---- MODAL ----
+function openClient(id) {
+  const c = clients.find(x => x.id === id);
+  if (!c) return;
+  currentClientId = id;
+  document.getElementById('modal-client-name').textContent = c.client;
+  document.getElementById('modal-client-sub').textContent = `${c.type === 'nouveau' ? '🚪 Nouveau contact' : '📄 Client qualifié'} · ${c.secteur||'—'} · ${new Date(c.createdAt).toLocaleDateString('fr-FR')}`;
+  document.getElementById('modal-status').value = c.statut || 'À analyser';
+  document.getElementById('modal-notes').value = c.userNotes || '';
+
+  let infoItems = [['Secteur', c.secteur||'—']];
+  if (c.type === 'qualifie') {
+    infoItems.push(['Énergie', c.energie||'—'], ['Fournisseur', c.fournisseur||'—'], ['Échéance', c.echeance ? new Date(c.echeance).toLocaleDateString('fr-FR',{month:'long',year:'numeric'}) : '—'], ['Problématique', c.problematique||'—'], ['Notes init.', c.notes||'—']);
+  } else {
+    infoItems.push(['Taille', c.taille||'—'], ['Observations', c.observations||'—'], ['Contexte', c.contexte||'—']);
+  }
+  document.getElementById('modal-info-grid').innerHTML = infoItems.map(([l,v]) => `<div class="info-item"><div class="info-label">${l}</div><div class="info-value">${v}</div></div>`).join('');
+
+  const ad = document.getElementById('modal-analysis-content');
+  if (c.analysis) {
+    const a = c.analysis;
+    if (c.type === 'nouveau') {
+      ad.innerHTML = `
+        <div class="modal-analysis-tabs">
+          <button class="modal-tab active" onclick="showModalTab('ma-accroche',this)">💬 Accroche</button>
+          <button class="modal-tab" onclick="showModalTab('ma-questions',this)">❓ Découverte</button>
+          <button class="modal-tab" onclick="showModalTab('ma-signaux',this)">👀 Signaux</button>
+          <button class="modal-tab" onclick="showModalTab('ma-objections',this)">🛡️ Objections</button>
+        </div>
+        <div id="ma-accroche" class="modal-tab-content active"><div class="accroche-block">${a.accroche}</div></div>
+        <div id="ma-questions" class="modal-tab-content"><ul class="result-list purple-list">${(Array.isArray(a.questions)?a.questions:[]).map(q=>`<li>${q.replace(/^[-•*\d.]\s*/,'')}</li>`).join('')}</ul></div>
+        <div id="ma-signaux" class="modal-tab-content">${(Array.isArray(a.signaux)?a.signaux:[]).map(s=>`<div class="signal-card"><div class="signal-title">👀 ${s.signal}</div><div class="signal-desc">${s.interpretation}</div></div>`).join('')}</div>
+        <div id="ma-objections" class="modal-tab-content">${(Array.isArray(a.objections)?a.objections:[]).map(o=>`<div class="objection-card"><div class="obj-title">⚠️ ${o.objection}</div><div class="obj-response">${o.reponse}</div></div>`).join('')}</div>`;
+    } else {
+      ad.innerHTML = `
+        <div class="modal-analysis-tabs">
+          <button class="modal-tab active" onclick="showModalTab('ma-analyse',this)">📊 Analyse</button>
+          <button class="modal-tab" onclick="showModalTab('ma-questions',this)">❓ Questions</button>
+          <button class="modal-tab" onclick="showModalTab('ma-objections',this)">🛡️ Objections</button>
+          <button class="modal-tab" onclick="showModalTab('ma-angle',this)">🎯 Angle</button>
+        </div>
+        <div id="ma-analyse" class="modal-tab-content active"><p style="font-size:13px;line-height:1.8;color:var(--text);">${a.analyse}</p></div>
+        <div id="ma-questions" class="modal-tab-content"><ul class="result-list">${(Array.isArray(a.questions)?a.questions:[]).map(q=>`<li>${q.replace(/^[-•*]\s*/,'')}</li>`).join('')}</ul></div>
+        <div id="ma-objections" class="modal-tab-content">${(Array.isArray(a.objections)?a.objections:[]).map(o=>`<div class="objection-card"><div class="obj-title">⚠️ ${o.objection}</div><div class="obj-response">${o.reponse}</div></div>`).join('')}</div>
+        <div id="ma-angle" class="modal-tab-content"><p style="font-size:13px;line-height:1.8;color:var(--text);">${a.angle}</p></div>`;
+    }
+  } else {
+    ad.innerHTML = `<div class="no-analysis">Pas encore d'analyse IA pour ce client.</div>`;
+  }
+  document.getElementById('modal-overlay').classList.add('visible');
+}
+
+function showModalTab(id, btn) {
+  document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.modal-tab-content').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+function closeModal() { document.getElementById('modal-overlay').classList.remove('visible'); currentClientId = null; }
+function closeModalOutside(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
+
+function updateStatus(val) {
+  if (!currentClientId) return;
+  const c = clients.find(x => x.id === currentClientId);
+  if (c) { c.statut = val; saveClients(); renderClients(); }
+}
+
+function saveNotes() {
+  if (!currentClientId) return;
+  const c = clients.find(x => x.id === currentClientId);
+  if (c) {
+    c.userNotes = document.getElementById('modal-notes').value;
+    saveClients();
+    const btn = document.querySelector('.save-notes-btn');
+    btn.textContent = '✅ Sauvegardé !';
+    setTimeout(() => btn.textContent = '💾 Sauvegarder', 2000);
+  }
+}
+
+// ---- INIT ----
+loadClients();
+updateHistoryCount();
+setMode('nouveau');
+</script>
+</body>
+</html>
