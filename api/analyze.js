@@ -22,14 +22,11 @@ module.exports = async function handler(req, res) {
     );
 
     const data = await response.json();
-    let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    text = text.replace(/```json/gi, '').replace(/```/gi, '').trim();
-    const match = text.match(/\{[\s\S]*\}/);
-    if (match) text = match[0];
-
-    res.status(200).json({ content: [{ text }] });
+    
+    // On renvoie tout pour déboguer
+    res.status(200).json({ debug: data });
 
   } catch(e) {
-    res.status(200).json({ error: { message: 'Erreur serveur : ' + e.message } });
+    res.status(200).json({ error: { message: e.message } });
   }
 }
