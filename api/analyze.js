@@ -21,7 +21,10 @@ export default async function handler(req, res) {
   );
 
   const data = await response.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+  // Nettoyer les balises markdown si présentes
+  text = text.replace(/```json\s*/gi, '').replace(/```\s*/gi, '').trim();
 
   res.status(200).json({
     content: [{ text }]
