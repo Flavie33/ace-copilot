@@ -23,10 +23,27 @@ export default async function handler(req, res) {
   const data = await response.json();
   let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
-  // Nettoyer les balises markdown si présentes
-  text = text.replace(/```json\s*/gi, '').replace(/```\s*/gi, '').trim();
+  // Nettoyage agressif
+  text = text.replace(/```json/gi, '').replace(/```/gi, '').trim();
 
-  res.status(200).json({
-    content: [{ text }]
-  });
+  // Extraire uniquement le JSON si du texte traîne autour
+  const match = text.match(/\{[\s\S]*\}/);
+  if (match) text = match[0];
+
+  // Vérifier que c'est du JSON valide avant de renvoyer
+  try {
+    JSON.parse(text);
+  } catch(e) {
+    return res.status(200).json({
+      content: [{ text: JSON.stringify({
+        analyse: text.substring(0, 200),
+        questions: ["Erreur de parsing — voir analyse"],
+        objections: [{"objection": "Erreur", "reponse": text.substring(0, 200)}],
+        angle: text.substring(0, 200),
+        mail: text.substring(0, 200)
+      })]
+    });
+  }
+
+  res.status(200).json({ content: [{ text }] });
 }
