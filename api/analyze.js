@@ -4,16 +4,26 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'anthropic-version': '2023-06-01',
-      'x-api-key': process.env.CLAUDE_API_KEY
-    },
-    body: JSON.stringify(req.body)
-  });
+  const { messages, system } = req.body;
+  const userMessage = messages[0].content;
+  const prompt = system + '\n\n' + userMessage;
+
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.7, maxOutputTokens: 2000 }
+      })
+    }
+  );
 
   const data = await response.json();
-  res.status(200).json(data);
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+  res.status(200).json({
+    content: [{ text }]
+  });
 }
